@@ -7,10 +7,13 @@
 This GitHub Action requires a bunch of environment variables, check the env section below.
   
 ```yaml
-# .github/workflows/take.yml 
-name: Assign issue to contributor
-on: 
-  issue_comment:
+# .github/workflows/deploy.yml 
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   assign:
