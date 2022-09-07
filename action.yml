@@ -1,0 +1,13 @@
+name: AWS EKS Deployment Action
+description: 'AWS EKS deployment for clusters running behind a VPC'
+branding:
+  icon: box
+  color: gray-dark
+runs-on: ubuntu-latest
+runs:
+  using: 'composite'
+  steps:
+  - 
+    run: |
+      pip3 install ec2instanceconnectcli==1.0.2
+      python3 deploy.sh
