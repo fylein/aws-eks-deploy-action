@@ -11,3 +11,4 @@ runs:
     run: |
       pip3 install ec2instanceconnectcli==1.0.2
       python3 deploy.sh
+    shell: bash
