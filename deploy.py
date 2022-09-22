@@ -18,7 +18,7 @@ ROLE_SESSION_NAME = os.environ.get('ROLE_SESSION_NAME')
 def get_vpc_id_and_endpoint():
     # Get eks cluster information
     logger.info('Getting eks cluster information')
-    cluster_info_command = f'aws eks describe-cluster --name {EKS_CLUSTER_NAME}'
+    cluster_info_command = f'aws --region={AWS_REGION} eks describe-cluster --name {EKS_CLUSTER_NAME}'
     cluster = json.loads(
         subprocess.check_output(cluster_info_command, shell=True)
     )['cluster']
@@ -30,7 +30,7 @@ def setup_ssh_tunnel(vpc_id: str, remote_host: str) -> str:
     # Get intance id through the vpcId generate in previous step
     logger.info('Getting intance id through the vpcId generate in previous step')
 
-    describe_instance_command = f'aws ec2 describe-instances --filters Name=vpc-id,Values={vpc_id}\
+    describe_instance_command = f'aws --region={AWS_REGION} ec2 describe-instances --filters Name=vpc-id,Values={vpc_id}\
      Name=tag:codename,Values="*bastion-host"'
     instance = json.loads(
         subprocess.check_output(describe_instance_command, shell=True)
@@ -52,7 +52,7 @@ def assume_kubectl_role():
     logger.info(
         'Assuming role to run kubectl and change credentials in environment')
 
-    assume_role_command = f'aws sts assume-role --role-arn {EKS_KUBECTL_ROLE} \
+    assume_role_command = f'aws --region={AWS_REGION} sts assume-role --role-arn {EKS_KUBECTL_ROLE} \
           --role-session-name {ROLE_SESSION_NAME} --duration-seconds 900'
 
     aws_credentials = json.loads(subprocess.check_output(
@@ -70,7 +70,7 @@ def replace_kubeconfig_server(mssh_remote_host: str):
 
     subprocess.run('rm -rf kubeconfig.yaml', shell=True, check=False)
 
-    fetch_kubeconfig_command = f'aws eks --region {AWS_REGION} update-kubeconfig --name {EKS_CLUSTER_NAME}\
+    fetch_kubeconfig_command = f'aws --region={AWS_REGION} eks update-kubeconfig --name {EKS_CLUSTER_NAME}\
       --kubeconfig kubeconfig.yaml'
 
     subprocess.run(fetch_kubeconfig_command, shell=True, check=False)
