@@ -3,7 +3,7 @@ import subprocess
 import json
 import logging
 
-logger = logging.getLogger('Deploy to Staging')
+logger = logging.getLogger('Deploy to Kubernetes Cluster')
 logging.basicConfig(level=logging.INFO)
 
 AWS_REGION = os.environ.get('AWS_REGION')
@@ -96,16 +96,16 @@ def apply_manifest():
         check=True
     )
     subprocess.run(
-        'sed -i "s?{{RELEASE_VERSION}}?${NEW_TAG}?" deployment/staging/controller.yml',
+        'sed -i "s?{{RELEASE_VERSION}}?${NEW_TAG}?" $KUBERNETES_MANIFEST_FILE_PATH',
         shell=True, check=False
     )
     subprocess.run(
-        'sed -i "s?{{DOCKERHUB_USERNAME}}?${DOCKERHUB_USERNAME}?" deployment/staging/controller.yml',
+        'sed -i "s?{{DOCKERHUB_USERNAME}}?${DOCKERHUB_USERNAME}?" $KUBERNETES_MANIFEST_FILE_PATH',
         shell=True, check=False
     )
 
     subprocess.run(
-        'kubectl apply -f deployment/staging/controller.yml',
+        'kubectl apply -f $KUBERNETES_MANIFEST_FILE_PATH',
         shell=True, check=False
     )
 
