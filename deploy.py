@@ -90,9 +90,24 @@ def replace_kubeconfig_server(mssh_remote_host: str):
 def apply_manifest():
     # Apply deployment manifest file
     logger.info('Applying deployment manifest file')
+    subprocess.run(
+        "echo '127.0.0.1  kubernetes' | sudo tee -a /etc/hosts",
+        shell=True,
+        check=True
+    )
+    subprocess.run(
+        'sed -i "s?{{RELEASE_VERSION}}?${NEW_TAG}?" deployment/staging/controller.yml',
+        shell=True, check=False
+    )
+    subprocess.run(
+        'sed -i "s?{{DOCKERHUB_USERNAME}}?${DOCKERHUB_USERNAME}?" deployment/staging/controller.yml',
+        shell=True, check=False
+    )
 
     subprocess.run(
-        'kubectl apply -f deployment/staging/controller.yml', shell=True, check=False)
+        'kubectl apply -f deployment/staging/controller.yml',
+        shell=True, check=False
+    )
 
 
 def kill_tunnel(server_address: str):
