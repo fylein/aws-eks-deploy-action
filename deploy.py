@@ -40,7 +40,7 @@ def setup_ssh_tunnel(vpc_id: str, remote_host: str) -> str:
     mssh_remote_host = remote_host.replace('https://', '')
 
     # Run tunnel
-    mssh_command = f'mssh -o StrictHostKeyChecking=no --region {AWS_REGION} \
+    mssh_command = f'mssh -v -o StrictHostKeyChecking=no --region {AWS_REGION} \
     -N -f -L {LOCAL_PORT}:{mssh_remote_host}:{REMOTE_PORT} ubuntu@{instance_id}'
     subprocess.run(mssh_command, shell=True, check=False)
 
